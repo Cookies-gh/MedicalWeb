@@ -678,3 +678,7 @@ def addDiseaseType(data):
     except Exception, e:
         tools.exceptionRecord('insert.py','addDiseaseType',e)
         return "-1"
+
+def t():
+    a = TrackInfo.objects.get(id = 25)
+    print a.doc.path

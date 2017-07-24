@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_crontab',
     'django_extensions',
+    'django_cleanup',
 ]
 
 CRONJOBS = (
