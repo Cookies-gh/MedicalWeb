@@ -2,7 +2,8 @@
 from suds.client import Client
 import urllib
 import urllib2
-
+import json
+import datetime
 from db_method import insert
 
 
@@ -10,6 +11,7 @@ from db_method import insert
 #样例：
 #'\xe6\x98\x8c\xe5\xb9\xb3':{'Station': '\xe6\x98\x8c\xe5\xb9\xb3', 'Date_Time': '2017-05-10 20:00:00', 'CO': '0.6', 'PM10': '101', 'PM2.5': '34', 'O3': '163', 'NO2': '15'}
 def getAirInfo():
+    print "getAirInfo"
     AirType = ['CO','O3','PM2.5','PM10','SO2','NO2']
     url = 'http://mobile.bjmemc.com.cn/AirService/Service.asmx?wsdl'
     client = Client(url)
@@ -68,24 +70,6 @@ def getAirInfo():
                     result_dict[i][key] = '未公布'
     # print result_dict
     return insert.addAirInfo(result_dict)
-# getAirInfo()
-
-def getWeatherInfo():
-    citys = ['海淀','朝阳','顺义','怀柔','通州','昌平','延庆','丰台','石景山','大兴','房山','密云','门头沟','平台','东城','西城']
-    citys_pinyin = ['haidian','chaoyang','shunyi','huairou','tongzhou','changping','yanqing','fengtai','shijingshan','daxing','fangshan','miyun','mentougou','pinggu','dongcheng','xicheng']
-
-    for city in citys:
-        url = "https://free-api.heweather.com/v5/weather?city="+ city +"&key=7b2a60a1e88c4fab967aea95cfc5efa7"
-        req = urllib2.Request(url)
-        res_data = urllib2.urlopen(req)
-        res = res_data.read()
-        print type(res)
-        print res
-
-
-print "i am running!!!!"
+# print "aaa"
 getAirInfo()
-# print "run over!!!"
 
-# getWeatherInfo()
-# getAirInfo()

@@ -5,7 +5,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 import demjson
-from db_method import insert,select,update,delete,soap
+from db_method import insert,select,update,delete
 from control_method import tools
 from django.shortcuts import render
 from django.contrib import auth

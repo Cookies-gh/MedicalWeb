@@ -1279,3 +1279,162 @@ def checkForInfoCompPercent(P_id):
     except Exception, e:
         tools.exceptionRecord('select.py', 'checkForInfoCompPercent', e)
         return 0
+
+
+##########   Filter Begin   ##########
+
+def filterIdByGender(gender, upper=None, start=None, end=None):
+    try:
+        result = PatientInfo.objects.filter(sex=str(gender)).values_list('P_id')
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByGender', e)
+
+def filterIdByAge(lower, upper, start=None, end=None):
+    try:
+        result = PatientInfo.objects.filter(age__gte=int(lower), age__lte=int(upper)).values_list('P_id')
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByAge', e)
+
+def filterIdByLungFunc(lower, upper, start=None, end=None):
+    from django.utils.timezone import now
+    if start is None:
+        start = "1970-1-1"
+    if end is None:
+        end = now().date()
+    try:
+        result = LungFunc.objects.filter(date__gte=start, date__lte=end,
+                                         age__gte=int(lower), age__lte=int(upper)).values_list('P_id').distinct()
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByLungFunc', e)
+
+def filterIdByMedicalVisit(lower, upper, start=None, end=None):
+    try:
+        result = []
+        for i in LungFunc.objects.raw('select distinct P_id from LungFunc where o_times + e_times + h_times >= ' + lower +
+                                      ' and o_times + e_times + h_times <= ' + upper + ';'):
+            result.append(i)
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByMedicalVisit', e)
+
+def filterIdByMRC(lower, upper, start=None, end=None):
+    from django.utils.timezone import now
+    if start is None:
+        start = "1970-1-1"
+    if end is None:
+        end = now().date()
+    try:
+        result = CATandMRC.objects.filter(date__gte=start, date__lte=end,
+                                          mrc__gte=int(lower), mrc__lte=int(upper)).values_list('P_id').distinct()
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByMRC', e)
+
+def filterIdByCAT(lower, upper, start=None, end=None):
+    from django.utils.timezone import now
+    if start is None:
+        start = "1970-1-1"
+    if end is None:
+        end = now().date()
+    try:
+        result = CATandMRC.objects.filter(date__gte=start, date__lte=end,
+                                          catSum__gte=int(lower), catSum__lte=int(upper)).values_list('P_id').distinct()
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByCAT', e)
+
+def filterIdByRisk(lung3, upper=None, start=None, end=None):
+    from django.utils.timezone import now
+    if start is None:
+        start = "1970-1-1"
+    if end is None:
+        end = now().date()
+    try:
+        result = Clinic.objects.filter(date__gte=start, date__lte=end,
+                                       lung3=int(lung3)).values_list('P_id').distinct()
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByRisk', e)
+
+def filterIdBySickerTimes(lower, upper, start=None, end=None):
+    from django.utils.timezone import now
+    end = now().date()
+    start = datetime.date(end.year - 1, end.month, end.day)
+    try:
+        result = []
+        for i in Clinic.objects.raw('select distinct P_id from Clinic X where '
+                                    '(select count(*) from Clinic where date >= "' + start + '" and P_id = X.P_id and acuteExac = "1") >= ' + lower + ' and '
+                                    '(select count(*) from Clinic where date >= "' + start + '" and P_id = X.P_id and acuteExac = "1") <= ' + upper + ';'):
+            result.append(i)
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdBySickerTimes', e)
+
+def filterIdByHospitalTimes(lower, upper, start=None, end=None):
+    from django.utils.timezone import now
+    end = now().date()
+    start = datetime.date(end.year - 1, end.month, end.day)
+    try:
+        result = CATandMRC.objects.filter(date__gte=start,
+                                          h_time__gte=int(lower), h_time__lte=int(upper)).values_list('P_id').distinct()
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByHospitalTimes', e)
+
+def filterIdByDiseaseType(para):
+    reference = {'1': 'first', '2': 'second', '3': 'third', '4': 'fourth'}
+    try:
+        sqlStatement = 'select distinct P_id from DiseaseType X where P_id != "***"'
+        for k,v in para:
+            sqlStatement += ' and exists (select * from DiseaseType where P_id = X.P_id and ' + reference[k] + ' = "' + v + '")'
+        sqlStatement += ';'
+        result = DiseaseType.objects.raw(sqlStatement)
+        return result
+    except Exception, e:
+        tools.exceptionRecord('select.py', 'filterIdByDiseaseType', e)
+
+##########   Filter End   ##########
+
+def patientIDFilter(data):
+    print "1"
+    print data
+    funcUse = {'1':  filterIdByGender,
+               '2':  filterIdByAge,
+               '3':  filterIdByLungFunc,
+               '4':  filterIdByMedicalVisit,
+               '5':  filterIdByMRC,
+               '6':  filterIdByCAT,
+               '7':  filterIdByRisk,
+               '8':  filterIdBySickerTimes,
+               '9':  filterIdByHospitalTimes,
+               '10': filterIdByDiseaseType}
+    from django.utils.timezone import now
+    print "2"
+    start = datetime.date(1970, 1, 1)
+    end = now().date()
+    if 'date_range' in data:
+        start = data['date_range'][0]
+        end = data['date_range'][1]
+    filterList = data['filter']
+    message = []
+    for filterMsg in filterList:
+        para = filterMsg['para']
+        para1 = para[0]
+        para2 = None
+        if filterMsg['filter_type'] != '10':
+            if len(para) > 1:
+                para2 = para[1]
+            result = funcUse[filterMsg['filter_type']](para1, para2, start, end)
+        else:
+            result = funcUse['10'](para)
+        if len(message) == 0:
+            message = set(result)
+        else:
+            message &= set(result)
+    print message, type(message),len(message),list(message)[0][0],type(list(message)[0])
+    # message = tools.toString(message)
+    # js = json.dumps(message)
+    return message

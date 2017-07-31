@@ -169,35 +169,35 @@ class TrackInfo(models.Model):
     doc = models.FileField(upload_to="TrackInfo")
 
 
-@receiver(models.signals.post_delete, sender=TrackInfo)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `MediaFile` object is deleted.
-    """
-    if instance.doc:
-        if os.path.isfile(instance.doc.path):
-            os.remove(instance.doc.path)
-
-@receiver(models.signals.pre_save, sender=TrackInfo)
-def auto_delete_file_on_change(sender, instance, **kwargs):
-    """
-    Deletes old file from filesystem
-    when corresponding `MediaFile` object is updated
-    with new file.
-    """
-    if not instance.pk:
-        return False
-
-    try:
-        old_file = TrackInfo.objects.get(pk=instance.pk).doc
-    except TrackInfo.DoesNotExist:
-        return False
-
-    new_file = instance.doc
-    if not old_file == new_file:
-        if os.path.isfile(old_file.path):
-            os.remove(old_file.path)
+# @receiver(models.signals.post_delete, sender=TrackInfo)
+# def auto_delete_file_on_delete(sender, instance, **kwargs):
+#     """
+#     Deletes file from filesystem
+#     when corresponding `MediaFile` object is deleted.
+#     """
+#     if instance.doc:
+#         if os.path.isfile(instance.doc.path):
+#             os.remove(instance.doc.path)
+#
+# @receiver(models.signals.pre_save, sender=TrackInfo)
+# def auto_delete_file_on_change(sender, instance, **kwargs):
+#     """
+#     Deletes old file from filesystem
+#     when corresponding `MediaFile` object is updated
+#     with new file.
+#     """
+#     if not instance.pk:
+#         return False
+#
+#     try:
+#         old_file = TrackInfo.objects.get(pk=instance.pk).doc
+#     except TrackInfo.DoesNotExist:
+#         return False
+#
+#     new_file = instance.doc
+#     if not old_file == new_file:
+#         if os.path.isfile(old_file.path):
+#             os.remove(old_file.path)
 
 # created by JK@buaa, 2017/3/17
 # table 9
@@ -472,41 +472,33 @@ class O3(models.Model):
 
 # table 16
 class WeatherInfo(models.Model):
-    dateTime = models.DateTimeField()
+    date = models.DateTimeField()
     date_auto = models.DateTimeField(auto_now_add=True)
 
-    zhiWuYuan = models.CharField(max_length=150, null=True)
-    yunGang = models.CharField(max_length=150, null=True)
-    yongLeDian = models.CharField(max_length=150, null=True)
-    dongDingMenNei = models.CharField(max_length=150, null=True)
-    yiZhuang = models.CharField(max_length=150, null=True)
-    yanQing = models.CharField(max_length=150, null=True)
-    xiZhiMenBei = models.CharField(max_length=150, null=True)
-    wanShouGongXi = models.CharField(max_length=150, null=True)
-    wanLiu = models.CharField(max_length=150, null=True)
-    tongZhou = models.CharField(max_length=150, null=True)
-    tianTan = models.CharField(max_length=150, null=True)
-    qianMen = models.CharField(max_length=150, null=True)
-    pingGu = models.CharField(max_length=150, null=True)
-    nongZhanGuan = models.CharField(max_length=150, null=True)
-    nanSanHuan = models.CharField(max_length=150, null=True)
-    miYunShuiKu = models.CharField(max_length=150, null=True)
-    menTouGou = models.CharField(max_length=150, null=True)
-    liuLiHe = models.CharField(max_length=150, null=True)
-    huaiRou = models.CharField(max_length=150, null=True)
-    guanYuan = models.CharField(max_length=150, null=True)
-    guCheng = models.CharField(max_length=150, null=True)
-    fengTaiHuaYuan = models.CharField(max_length=150, null=True)
-    fangShan = models.CharField(max_length=150, null=True)
-    dongSiHuan = models.CharField(max_length=150, null=True)
-    dongSi = models.CharField(max_length=150, null=True)
-    dongGaoCun = models.CharField(max_length=150, null=True)
-    dingLing = models.CharField(max_length=150, null=True)
-    daXing = models.CharField(max_length=150, null=True)
-    changPing = models.CharField(max_length=150, null=True)
-    beiBuXinQu = models.CharField(max_length=150, null=True)
-    baDaLing = models.CharField(max_length=150, null=True)
-    aoTiZhongXin = models.CharField(max_length=150, null=True)
+    city = models.CharField(max_length=10, default="")
+
+    aqi = models.IntegerField(default=-1)
+    co = models.IntegerField(default=-1)
+    no2 = models.IntegerField(default=-1)
+    o3 = models.IntegerField(default=-1)
+    pm10 = models.IntegerField(default=-1)
+    pm25 = models.IntegerField(default=-1)
+    qlty = models.CharField(max_length=10, default="")
+    so2 = models.IntegerField(default=-1)
+    #天气状况 白天 晚上
+    txt_d = models.CharField(max_length=30, default="")
+    txt_n = models.CharField(max_length=30, default="")
+    #湿度
+    hum = models.IntegerField(default=-1)
+    #温度
+    tmp_max = models.IntegerField(default=-1)
+    tmp_min = models.IntegerField(default=-1)
+    #风
+    wind_deg = models.CharField(max_length=10, default="")
+    wind_dir = models.CharField(max_length=10, default="")
+    wind_sc = models.CharField(max_length=10, default="")
+    wind_spd = models.CharField(max_length=10, default="")
+
 
 
 # created by CS@buaa, 2017/3/17

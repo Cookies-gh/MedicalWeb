@@ -679,6 +679,15 @@ def addDiseaseType(data):
         tools.exceptionRecord('insert.py','addDiseaseType',e)
         return "-1"
 
-def t():
-    a = TrackInfo.objects.get(id = 25)
-    print a.doc.path
+
+###########add weather infos #############
+def addWeatherInfo(data):
+    try:
+        obj = WeatherInfo(date = data[0], city = data[1], aqi = data[2], co = data[3], no2 = data[4], o3 = data[5],
+                          pm10 = data[6], pm25 = data[7], qlty = data[8], so2 = data[9], txt_d = data[10], txt_n = data[11],
+                          hum = data[12], tmp_max = data[13], tmp_min = data[14], wind_deg = data[15], wind_dir = data[16],
+                          wind_sc = data[17], wind_spd = data[18])
+        obj.save()
+    except Exception, e:
+        tools.exceptionRecord('insert.py','addWeatherInfo',e)
+        return False
