@@ -65,5 +65,5 @@ def getWeatherInfo():
         # print data, type(data), data[0]
         insert.addWeatherInfo(data)
 
-getWeatherInfo()
+
 

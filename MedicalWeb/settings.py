@@ -45,8 +45,9 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = (
-    ('*/60 * * * *', 'MedicalWeb.db_method.weather', '>> /tmp/weather.log'),
-    ('*/60 * * * *', 'MedicalWeb.db_method.soap', '>> /tmp/aa.log'),
+    ('* */24 * * *', 'Website.weather.getWeatherInfo', '>> /tmp/WeatherInfos.log'),
+    ('*/60 * * * *', 'Website.airInfos.getAirInfo', '>> /tmp/AirInfos.log'),
+    # ('*/1 * * * *', 'Website.soap.pp', '>> /tmp/bb.log'),
 )
 
 MIDDLEWARE = [
