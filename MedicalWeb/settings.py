@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 ]
 
 CRONJOBS = (
-    ('* */24 * * *', 'Website.weather.getWeatherInfo', '>> /tmp/WeatherInfos.log'),
+    ('*/60 */24 * * *', 'Website.weather.getWeatherInfo', '>> /tmp/WeatherInfos.log'),
     ('*/60 * * * *', 'Website.airInfos.getAirInfo', '>> /tmp/AirInfos.log'),
     # ('*/1 * * * *', 'Website.soap.pp', '>> /tmp/bb.log'),
 )
